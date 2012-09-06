@@ -7,10 +7,12 @@ import com.atlassian.confluence.content.service.page.ContentPermissionProvider;
 import com.atlassian.confluence.core.BodyContent;
 import com.atlassian.confluence.core.DefaultSaveContext;
 import com.atlassian.confluence.core.SaveContext;
+import com.atlassian.confluence.pages.AttachmentManager;
 import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.security.ContentPermission;
+import com.atlassian.core.util.map.EasyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -31,10 +34,12 @@ public class PublishResource
     private static final Logger log = LoggerFactory.getLogger(PublishResource.class);
 
     private final PageManager pageManager;
+    private final AttachmentManager attachmentManager;
 
-    public PublishResource(PageManager pageManager)
+    public PublishResource(PageManager pageManager, AttachmentManager attachmentManager)
     {
         this.pageManager = pageManager;
+        this.attachmentManager = attachmentManager;
     }
 
     /**
@@ -47,6 +52,7 @@ public class PublishResource
     public Response publishPageAsBlog(@PathParam("id") long id)
     {
         //TODO: Check AUTH
+        //TODO: duplication check
 
         log.error("publish [ " + id + " ]");
 
@@ -54,14 +60,28 @@ public class PublishResource
         if (page != null)
         {
             BlogPost post = new BlogPost();
-            post.setTitle("Test");
-            post.setBodyAsString("Content");
-            // this throws an NPE if you don't suppress events - GAH
-            pageManager.saveContentEntity(post,new DefaultSaveContext(false,true,false));
+            post.setTitle(page.getTitle());
+            post.setBodyAsString(page.getBodyAsString());
+            post.setSpace(page.getSpace());
+            pageManager.saveContentEntity(post, new DefaultSaveContext(false, true, false));
 
+            // Copy attachments
+            // TODO update attachment links?
+            // TODO update permissions?
+            try
+            {
+                attachmentManager.copyAttachments(page,post);
+            }
+            catch (IOException e)
+            {
+                log.error("could not copy attachments from [ "+page+" ] to [ "+post+" ]: "+e.getLocalizedMessage(), e);
+            }
+
+            return Response.ok(EasyMap.build("url",post.getUrlPath())).build();
+//            return Response.ok().build();
         }
+        return Response.status(404).build();
 
-        return Response.ok().build();
     }
 
     @GET
