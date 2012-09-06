@@ -98,19 +98,22 @@ AJS.toInit(function(){
 //        return updateTask.promise();
     };
 
-    alert($("#publish_asblog").length);
+    var dialog = new AJS.Dialog(860, 530);
+    dialog.addHeader("Publish To Blog", "");
 
-    $("#publish_asblog").click(function(e) {
+    dialog.addPanel("Publish To Blog", "", "", 1);
+    dialog.getCurrentPanel().html('<p>INSERT CONTENT HERE</p>');
 
-        var dropDown = $(this).parents(".ajs-drop-down")[0];
-        dropDown && dropDown.hide();
+    dialog.addCancel("Cancel", function() {
+        dialog.hide();
+    });
 
-        if (typeof popup == "undefined") {
-            popup = createPopUp();
-        }
-        popup.setError("");
-        popup.show();
-        return AJS.stopEvent(e);
+    dialog.addSubmit("Publish", function() {
+
+    });
+
+    AJS.$("#publish_asblog").click(function(e) {
+        dialog.show();
     });
 
 });
