@@ -13,7 +13,16 @@
 
     <web-resource key="publish-asblog-resources">
         <context>atl.general</context>
-        <dependency>confluence.web.resources:ajs</dependency>
-        <resource type="download" name="publish_asblog.js" location="js/publish_asblog.js"/>
+        <dependency>com.atlassian.confluence.plugins.confluence-publish-plugin:publish-soy-resources</dependency>
+        <resource type="download" name="publish.js" location="js/publish.js"/>
     </web-resource>
+
+    <web-resource key="publish-soy-resources" name="Publish Plugin Soy Resources">
+        <transformation extension="soy">
+            <transformer key="soyTransformer"/>
+        </transformation>        ...
+        <resource type="download" name="publish-soy.js" location="/templates/publish.soy"/>
+        <dependency>confluence.web.resources:ajs</dependency>
+    </web-resource>
+
 </atlassian-plugin>
