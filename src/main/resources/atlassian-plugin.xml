@@ -25,4 +25,8 @@
         <dependency>confluence.web.resources:ajs</dependency>
     </web-resource>
 
+    <rest key="publish-rest" path="/publish" version="1">
+        <description>Provides REST resources for publishing pages.</description>
+    </rest>
+
 </atlassian-plugin>
