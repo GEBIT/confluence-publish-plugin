@@ -4,14 +4,14 @@ AJS.toInit(function(){
 
     function createDialog() {
         dialog = new AJS.Dialog(860, 530);
-        dialog.addHeader("Publish To Blog", "");
-        dialog.addPanel("Publish To Blog", "", "", 1);
+        dialog.addHeader(AJS.I18n.getText("publish.dialog.asblog.header"), "");
+        dialog.addPanel(AJS.I18n.getText("publish.dialog.asblog.title"), "", "", 1);
         var template = Confluence.Templates.Publish.publishAsBlog();
         dialog.getCurrentPanel().html(template);
-        dialog.addCancel("Cancel", function() {
+        dialog.addCancel(AJS.I18n.getText("cancel.name"), function() {
             dialog.hide();
         });
-        dialog.addSubmit("Publish", function() {
+        dialog.addSubmit(AJS.I18n.getText("publish.dialog.asblog.button"), function() {
         });
     }
 
