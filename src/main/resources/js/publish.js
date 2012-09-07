@@ -9,7 +9,7 @@ AJS.toInit(function(){
         popup = new AJS.Dialog(480, 330);
 
         popup.addPage("form-page");
-        popup.addPage("spinner-page");
+        popup.addPage("creating-page");
         popup.addPage("loading-page");
 
         popup.gotoPage(1);
@@ -35,9 +35,9 @@ AJS.toInit(function(){
         });
 
         popup.gotoPage(2);
-        popup.addPanel("Spinner","#spinner");
-        popup.addHeader(AJS.I18n.getText("publish.dialog.spinner"));
-        popup.getCurrentPanel().html(Confluence.Templates.Publish.spinner());
+        popup.addPanel("Creating","#creating");
+        popup.addHeader(AJS.I18n.getText("publish.dialog.creating"));
+        popup.getCurrentPanel().html(Confluence.Templates.Publish.creating());
 
         popup.gotoPage(3);
         popup.addPanel("Loading","#loading");
