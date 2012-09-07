@@ -23,7 +23,7 @@
     <web-resource key="publish-soy-resources" name="Publish Plugin Soy Resources">
         <transformation extension="soy">
             <transformer key="soyTransformer"/>
-        </transformation>        ...
+        </transformation>
         <resource type="download" name="publish-soy.js" location="/templates/publish.soy"/>
         <dependency>confluence.web.resources:ajs</dependency>
     </web-resource>

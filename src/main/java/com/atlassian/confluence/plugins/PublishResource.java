@@ -6,7 +6,6 @@ import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.core.util.map.EasyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
