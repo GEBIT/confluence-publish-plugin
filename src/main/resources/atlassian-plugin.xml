@@ -11,7 +11,7 @@
         <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
     </web-item>
 
-    <web-resource key="publish-asblog-resources">
+    <web-resource key="publish-resources">
         <context>atl.general</context>
         <dependency>com.atlassian.confluence.plugins.confluence-publish-plugin:publish-soy-resources</dependency>
         <resource type="download" name="publish.js" location="js/publish.js"/>
