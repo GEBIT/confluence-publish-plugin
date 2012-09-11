@@ -6,12 +6,15 @@
     </plugin-info>
 
     <web-item key="publish-as-blog" name="Publish as Blog" section="system.content.action/secondary" weight="40">
-        <label key="confluence.publish.asblog" />
+        <label key="publish.asblog" />
         <link linkId="publish_asblog" absolute="true"></link>
         <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
     </web-item>
 
-    <web-resource key="publish-asblog-resources">
+    <web-resource key="publish-resources">
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
         <context>atl.general</context>
         <dependency>com.atlassian.confluence.plugins.confluence-publish-plugin:publish-soy-resources</dependency>
         <resource type="download" name="publish.js" location="js/publish.js"/>
@@ -20,7 +23,7 @@
     <web-resource key="publish-soy-resources" name="Publish Plugin Soy Resources">
         <transformation extension="soy">
             <transformer key="soyTransformer"/>
-        </transformation>        ...
+        </transformation>
         <resource type="download" name="publish-soy.js" location="/templates/publish.soy"/>
         <dependency>confluence.web.resources:ajs</dependency>
     </web-resource>
@@ -28,5 +31,7 @@
     <rest key="publish-rest" path="/publish" version="1">
         <description>Provides REST resources for publishing pages.</description>
     </rest>
+
+    <resource key="publish-i18n" type="i18n" name="i18n" location="i18n.PublishPlugin" />
 
 </atlassian-plugin>
