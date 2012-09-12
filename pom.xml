@@ -19,6 +19,12 @@
     <description>A plugin used to publish confluence pages as blog posts.</description>
     <packaging>atlassian-plugin</packaging>
 
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/mjensen/confluence-publish-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/mjensen/confluence-publish-plugin.git</developerConnection>
+        <url>https://bitbucket.org/mjensen/confluence-publish-plugin</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
