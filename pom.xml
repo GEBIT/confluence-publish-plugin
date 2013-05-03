@@ -10,7 +10,7 @@
     <parent>
         <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
-        <version>29.6</version>
+        <version>39</version>
     </parent>
 
     <name>Confluence Publish Plugin</name>
@@ -67,10 +67,11 @@
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-confluence-plugin</artifactId>
-                <version>3.6.2</version>
+                <artifactId>maven-amps-plugin</artifactId>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <product>confluence</product>
                     <productVersion>${confluence.version}</productVersion>
                     <productDataVersion>${confluence.data.version}</productDataVersion>
                 </configuration>
@@ -106,9 +107,9 @@
     </build>
 
     <properties>
-        <confluence.version>4.2.13</confluence.version>
-        <confluence.data.version>3.5</confluence.data.version>
-        <amps.version>3.11</amps.version>
+        <confluence.version>5.2-m2</confluence.version>
+        <confluence.data.version>5.2-m2</confluence.data.version>
+        <amps.version>4.1.8-SNAPSHOT</amps.version>
     </properties>
 
 </project>
