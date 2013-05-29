@@ -1,22 +1,34 @@
 package com.atlassian.confluence.plugins;
 
-import com.atlassian.confluence.core.DefaultSaveContext;
-import com.atlassian.confluence.pages.AttachmentManager;
-import com.atlassian.confluence.pages.BlogPost;
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.pages.PageManager;
-import com.atlassian.confluence.setup.settings.SettingsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.atlassian.confluence.core.DefaultSaveContext;
+import com.atlassian.confluence.labels.Label;
+import com.atlassian.confluence.labels.LabelManager;
+import com.atlassian.confluence.labels.Labelable;
+import com.atlassian.confluence.pages.AttachmentManager;
+import com.atlassian.confluence.pages.BlogPost;
+import com.atlassian.confluence.pages.Page;
+import com.atlassian.confluence.pages.PageManager;
+import com.atlassian.confluence.security.Permission;
+import com.atlassian.confluence.security.PermissionManager;
+import com.atlassian.confluence.security.SpacePermission;
+import com.atlassian.confluence.security.SpacePermissionManager;
+import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.user.User;
 
 /**
  * A REST resource for controlling the publish to blog post process.
@@ -29,12 +41,18 @@ public class PublishResource
     private final PageManager pageManager;
     private final AttachmentManager attachmentManager;
     private final SettingsManager settingsManager;
+    private final LabelManager labelManager;
+    private final PermissionManager permissionManager;
+    private final SpacePermissionManager spacePermissionManager;
 
-    public PublishResource(PageManager pageManager, AttachmentManager attachmentManager, SettingsManager settingsManager)
+    public PublishResource(PageManager pageManager, AttachmentManager attachmentManager, SettingsManager settingsManager, LabelManager labelManager, PermissionManager permissionManager, SpacePermissionManager spacePermissionManager)
     {
         this.pageManager = pageManager;
         this.attachmentManager = attachmentManager;
         this.settingsManager = settingsManager;
+        this.labelManager = labelManager;
+        this.permissionManager = permissionManager;
+        this.spacePermissionManager = spacePermissionManager;
     }
 
     /**
@@ -46,7 +64,7 @@ public class PublishResource
     @Path("/{id}")
     public Response publishPageAsBlog(@PathParam("id") long id)
     {
-        //TODO: Check AUTH
+
         //TODO: duplication check
 
         logger.error("publish [ " + id + " ]");
@@ -54,11 +72,19 @@ public class PublishResource
         final Page page = pageManager.getPage(id);
         if (page != null)
         {
+
+            if (!isPermitted(page)) {
+                return Response.status(401).build();
+            }
+
             BlogPost post = new BlogPost();
             post.setTitle(page.getTitle());
             post.setBodyAsString(page.getBodyAsString());
             post.setSpace(page.getSpace());
             pageManager.saveContentEntity(post, new DefaultSaveContext(false, true, false));
+
+            // Copy labels
+            copyLabels(page, post);
 
             // Copy attachments
             // TODO update attachment links?
@@ -89,6 +115,37 @@ public class PublishResource
     public Response get()
     {
         return Response.ok().build();
+    }
+
+    private void copyLabels(Labelable original, Labelable copy)
+    {
+        List<Label> labels = original.getLabels();
+        for (Label label : labels)
+        {
+            labelManager.addLabel(copy, label);
+        }
+    }
+
+    private boolean isPermitted(Page page)
+    {
+        // anonymous users are not allowed to publish blogs
+        User user = AuthenticatedUserThreadLocal.getUser();
+        if (user == null) {
+            return false;
+        }
+
+        //check for add blogpost permission
+        if (!spacePermissionManager.hasPermission(SpacePermission.EDITBLOG_PERMISSION, page.getSpace(), user)) {
+            return false;
+        }
+
+        //check view permission for page
+        if (!permissionManager.hasPermission(user, Permission.VIEW, page)) {
+            return false;
+        }
+
+        return true;
+
     }
 
 }
