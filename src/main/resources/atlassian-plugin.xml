@@ -8,7 +8,15 @@
     <web-item key="publish-as-blog" name="Publish as Blog" section="system.content.action/secondary" weight="40">
         <label key="publish.asblog" />
         <link linkId="publish_asblog" absolute="true"></link>
-        <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
+        <conditions type="AND">
+            <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
+            <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.PagePermissionCondition">
+                <param name="permission">view</param>
+            </condition>
+            <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceFunctionPermissionCondition">
+                <param name="permission">EDITBLOG</param>
+            </condition>
+        </conditions>
     </web-item>
 
     <web-resource key="publish-resources">
