@@ -6,7 +6,7 @@ AJS.toInit(function(){
         var contextPath = AJS.Confluence.getContextPath();
         var pageId = AJS.params.pageId;
 
-        popup = new AJS.Dialog(480, 330);
+        popup = new AJS.Dialog({width: 480, height: 330, id: "publish-asblog-dialog"});
 
         popup.addPage("form-page");
         popup.addPage("creating-page");
@@ -68,7 +68,7 @@ AJS.toInit(function(){
         popup.gotoPage(1);
     }
 
-    AJS.$("#publish_asblog").click(function(e) {
+    AJS.$("#publish-asblog").click(function(e) {
         if(typeof popup == "undefined") {
             createDialog()
         }

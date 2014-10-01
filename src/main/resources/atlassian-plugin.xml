@@ -7,7 +7,7 @@
 
     <web-item key="publish-as-blog" name="Publish as Blog" section="system.content.action/secondary" weight="40">
         <label key="publish.asblog" />
-        <link linkId="publish_asblog" absolute="true"></link>
+        <link linkId="publish-asblog" absolute="true"></link>
         <conditions type="AND">
             <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
             <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.PagePermissionCondition">

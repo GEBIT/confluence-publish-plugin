@@ -11,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,6 @@ import com.atlassian.confluence.security.Permission;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
-import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.user.User;
 
@@ -40,19 +41,24 @@ public class PublishResource
 
     private final PageManager pageManager;
     private final AttachmentManager attachmentManager;
-    private final SettingsManager settingsManager;
     private final LabelManager labelManager;
     private final PermissionManager permissionManager;
     private final SpacePermissionManager spacePermissionManager;
+    private final ApplicationProperties applicationProperties;
 
-    public PublishResource(PageManager pageManager, AttachmentManager attachmentManager, SettingsManager settingsManager, LabelManager labelManager, PermissionManager permissionManager, SpacePermissionManager spacePermissionManager)
+    public PublishResource(PageManager pageManager,
+                           AttachmentManager attachmentManager,
+                           LabelManager labelManager,
+                           PermissionManager permissionManager,
+                           SpacePermissionManager spacePermissionManager,
+                           ApplicationProperties applicationProperties)
     {
         this.pageManager = pageManager;
         this.attachmentManager = attachmentManager;
-        this.settingsManager = settingsManager;
         this.labelManager = labelManager;
         this.permissionManager = permissionManager;
         this.spacePermissionManager = spacePermissionManager;
+        this.applicationProperties = applicationProperties;
     }
 
     /**
@@ -87,8 +93,6 @@ public class PublishResource
             copyLabels(page, post);
 
             // Copy attachments
-            // TODO update attachment links?
-            // TODO update permissions?
             try
             {
                 attachmentManager.copyAttachments(page,post);
@@ -100,7 +104,7 @@ public class PublishResource
 
             try
             {
-                return Response.created(new URI(settingsManager.getGlobalSettings().getBaseUrl()+post.getUrlPath())).build();
+                return Response.created(new URI(applicationProperties.getBaseUrl(UrlMode.ABSOLUTE)+post.getUrlPath())).build();
             }
             catch (URISyntaxException e)
             {
@@ -140,12 +144,7 @@ public class PublishResource
         }
 
         //check view permission for page
-        if (!permissionManager.hasPermission(user, Permission.VIEW, page)) {
-            return false;
-        }
-
-        return true;
-
+        return permissionManager.hasPermission(user, Permission.VIEW, page);
     }
 
 }

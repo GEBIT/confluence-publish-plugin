@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.confluence.plugins</groupId>
     <artifactId>confluence-publish-plugin</artifactId>
     <version>2.2-SNAPSHOT</version>
-
     <parent>
-        <artifactId>atlassian-public-pom</artifactId>
+        <artifactId>public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
-        <version>39</version>
+        <version>3.0.39</version>
     </parent>
-
     <name>Confluence Publish Plugin</name>
     <description>A plugin used to publish confluence pages as blog posts.</description>
     <packaging>atlassian-plugin</packaging>
-
     <scm>
         <connection>scm:git:ssh://git@bitbucket.org/mjensen/confluence-publish-plugin.git</connection>
         <developerConnection>scm:git:ssh://git@bitbucket.org/mjensen/confluence-publish-plugin.git</developerConnection>
         <url>https://bitbucket.org/mjensen/confluence-publish-plugin</url>
     </scm>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -54,15 +49,19 @@
             <version>1.9.12</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
             <artifactId>atlassian-rest-common</artifactId>
             <version>2.7.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>atlassian-confluence-pageobjects</artifactId>
+            <version>${confluence.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -74,42 +73,32 @@
                     <product>confluence</product>
                     <productVersion>${confluence.version}</productVersion>
                     <productDataVersion>${confluence.data.version}</productDataVersion>
+
+                    <systemPropertyVariables>
+                        <http.confluence.port>1990</http.confluence.port>
+                        <context.confluence.path>confluence</context.confluence.path>
+                        <baseurl.confluence>http://localhost:1990/confluence</baseurl.confluence>
+                        <server>localhost</server>
+                    </systemPropertyVariables>
+
+                    <testGroups>
+                        <testGroup>
+                            <id>01-webdriver</id>
+                            <includes>
+                                <include>it/**/*.java</include>
+                            </includes>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                        </testGroup>
+                    </testGroups>
                 </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*$*</exclude>
-                        <exclude>**/Abstract*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-amps-plugin</artifactId>
-                <version>${amps.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-amps-dispatcher-plugin</artifactId>
-                <version>${amps.version}</version>
             </plugin>
         </plugins>
     </build>
-
     <properties>
-        <confluence.version>5.2-m2</confluence.version>
-        <confluence.data.version>5.2-m2</confluence.data.version>
-        <amps.version>4.2.0</amps.version>
+        <confluence.version>5.6.3</confluence.version>
+        <confluence.data.version>5.6.3</confluence.data.version>
+        <amps.version>5.0.3</amps.version>
     </properties>
-
 </project>
