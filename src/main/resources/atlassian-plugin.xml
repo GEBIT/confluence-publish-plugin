@@ -7,7 +7,7 @@
 
     <web-item key="publish-as-blog" name="Publish as Blog" section="system.content.action/secondary" weight="40">
         <label key="publish.asblog" />
-        <link linkId="publish-asblog" absolute="true"></link>
+        <link linkId="publish-asblog" absolute="true">#publish-asblog</link>
         <conditions type="AND">
             <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.HasPageCondition"/>
             <condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.PagePermissionCondition">
@@ -20,26 +20,34 @@
     </web-item>
 
     <web-resource key="publish-resources">
+<!-- commented out; not available in Confluence 3.x 
         <transformation extension="js">
             <transformer key="jsI18n"/>
         </transformation>
-        <context>atl.general</context>
-        <dependency>com.atlassian.confluence.plugins.confluence-publish-plugin:publish-soy-resources</dependency>
+ -->
+         <context>page</context>
+        <!-- <dependency>com.atlassian.confluence.plugins.confluence-publish-plugin:publish-soy-resources</dependency> -->
         <resource type="download" name="publish.js" location="js/publish.js"/>
     </web-resource>
 
+<!-- commented out; not available in Confluence 3.x
     <web-resource key="publish-soy-resources" name="Publish Plugin Soy Resources">
         <transformation extension="soy">
-            <transformer key="soyTransformer"/>
+            <transformer key="soyTransformer"><functions>com.atlassian.confluence.plugins.soy:soy-core-functions</functions>
+            </transformer>
         </transformation>
+        <context>page</context>
         <resource type="download" name="publish-soy.js" location="/templates/publish.soy"/>
         <dependency>confluence.web.resources:ajs</dependency>
     </web-resource>
-
+ -->
     <rest key="publish-rest" path="/publish" version="1">
         <description>Provides REST resources for publishing pages.</description>
     </rest>
 
     <resource key="publish-i18n" type="i18n" name="i18n" location="i18n.PublishPlugin" />
 
+	<component-import key="applicationProperties" name="Application Properties">
+    	<interface>com.atlassian.sal.api.ApplicationProperties</interface>
+	</component-import>
 </atlassian-plugin>

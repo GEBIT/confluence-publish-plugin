@@ -2,7 +2,7 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.atlassian.confluence.plugins</groupId>
+    <groupId>de.gebit.com.atlassian.confluence.plugins</groupId>
     <artifactId>confluence-publish-plugin</artifactId>
     <version>2.3-SNAPSHOT</version>
     <parent>
@@ -10,7 +10,7 @@
         <groupId>com.atlassian.pom</groupId>
         <version>3.0.39</version>
     </parent>
-    <name>Confluence Publish Plugin</name>
+    <name>GEBIT Confluence Publish Plugin</name>
     <description>A plugin used to publish confluence pages as blog posts.</description>
     <packaging>atlassian-plugin</packaging>
     <scm>
@@ -58,7 +58,13 @@
         <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>atlassian-confluence-pageobjects</artifactId>
-            <version>${confluence.version}</version>
+            <version>5.4.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence</groupId>
+            <artifactId>confluence-test-support</artifactId>
+            <version>5.7</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -97,7 +103,7 @@
         </plugins>
     </build>
     <properties>
-        <confluence.version>5.7</confluence.version>
+        <confluence.version>3.5</confluence.version>
         <confluence.data.version>5.7</confluence.data.version>
         <amps.version>5.0.3</amps.version>
     </properties>

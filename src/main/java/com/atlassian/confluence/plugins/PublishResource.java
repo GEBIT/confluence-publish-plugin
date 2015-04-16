@@ -11,15 +11,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.core.DefaultSaveContext;
 import com.atlassian.confluence.labels.Label;
 import com.atlassian.confluence.labels.LabelManager;
 import com.atlassian.confluence.labels.Labelable;
+import com.atlassian.confluence.pages.Attachment;
 import com.atlassian.confluence.pages.AttachmentManager;
 import com.atlassian.confluence.pages.BlogPost;
 import com.atlassian.confluence.pages.Page;
@@ -29,7 +29,10 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermission;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.sal.api.ApplicationProperties;
+//import com.atlassian.sal.api.UrlMode;
 import com.atlassian.user.User;
+//import com.atlassian.sal.confluence.ConfluenceApplicationProperties;
 
 /**
  * A REST resource for controlling the publish to blog post process.
@@ -85,9 +88,11 @@ public class PublishResource
 
             BlogPost post = new BlogPost();
             post.setTitle(page.getTitle());
-            post.setBodyAsString(page.getBodyAsString());
+            post.setContent(page.getContent());
             post.setSpace(page.getSpace());
-            pageManager.saveContentEntity(post, new DefaultSaveContext(false, true, false));
+            DefaultSaveContext defaultSaveContext = new DefaultSaveContext();
+            defaultSaveContext.setUpdateLastModifier(true);
+            pageManager.saveContentEntity(post, defaultSaveContext);
 
             // Copy labels
             copyLabels(page, post);
@@ -95,7 +100,7 @@ public class PublishResource
             // Copy attachments
             try
             {
-                attachmentManager.copyAttachments(page,post);
+                copyAttachments(page,post);
             }
             catch (IOException e)
             {
@@ -104,7 +109,8 @@ public class PublishResource
 
             try
             {
-                return Response.created(new URI(applicationProperties.getBaseUrl(UrlMode.ABSOLUTE)+post.getUrlPath())).build();
+//            	return Response.created(new URI(applicationProperties.getBaseUrl(UrlMode.ABSOLUTE)+post.getUrlPath())).build();
+                return Response.created(new URI(applicationProperties.getBaseUrl()+post.getUrlPath())).build();
             }
             catch (URISyntaxException e)
             {
@@ -115,13 +121,22 @@ public class PublishResource
 
     }
 
-    @GET
+    private void copyAttachments(Page page, BlogPost post) throws IOException {
+    	List<Attachment> attachments = attachmentManager.getAttachments(page);
+    	for (Attachment attachment : attachments) {
+    		Attachment target = new Attachment(attachment.getFileName(), attachment.getContentType(), attachment.getFileSize(), attachment.getComment());
+			post.addAttachment(target);
+			attachmentManager.saveAttachment(target, null, attachment.getContentsAsStream());
+		}
+	}
+
+	@GET
     public Response get()
     {
         return Response.ok().build();
     }
 
-    private void copyLabels(Labelable original, Labelable copy)
+    private void copyLabels(Labelable original, ContentEntityObject copy)
     {
         List<Label> labels = original.getLabels();
         for (Label label : labels)
